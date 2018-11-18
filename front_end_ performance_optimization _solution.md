@@ -435,8 +435,7 @@ DocumentFragment 接口表示一个没有父级文件的最小文档对象。它
 // 普通方式
 for (var count = 0; count < 10000; count++) {
   document.getElementById("container").innerHTML +=
-    "<span>我是一个小测试</span
-    >";
+    "<span>我是一个小测试</span>";
 }
 ```
 
@@ -458,6 +457,13 @@ container.appendChild(content);
 
 #### 4.3 缓存 DOM 元素的几何属性：避免频繁改动
 
+当一个 DOM 元素的几何属性(比如 width、height、padding、margin、left、top、border )发生变化时，所有和它相关的节点（比如父子节点、兄弟节点等）的几何属性都需要进行重新计算，它会带来巨大的计算量。
+
+另外，获取一些特定属性的值，比如 offsetTop、offsetLeft、 offsetWidth、offsetHeight、scrollTop、scrollLeft、scrollWidth、scrollHeight、clientTop、clientLeft、clientWidth、clientHeight，
+因为浏览器需要通过 `即时计算` 得到这些属性，也会进行回流。
+
+当我们调用了 `getComputedStyle` 方法，或者 IE 里的 `currentStyle` 时，也会触发`回流`。原理是一样的，都为求一个“即时性”和“准确性”。
+
 需求：通过多次计算得到一个元素的布局位置。
 
 A.普通的写法：
@@ -472,7 +478,7 @@ for (let i = 0; i < 10; i++) {
 }
 ```
 
-每次循环都需要获取多次“敏感属性”，是比较糟糕的。我们可以将其以 JS 变量的形式缓存起来，待计算完毕再提交给浏览器发出重计算请求：
+每次循环都需要获取多次“敏感属性”，是比较糟糕的。我们可以将其以 JS 变量的形式`缓存`起来，待计算完毕再提交给浏览器发出重计算请求：
 
 B.更高效的写法：
 
